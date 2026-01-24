@@ -1,5 +1,5 @@
-user = 'root'
-password = ''
+user = 'postgres'
+password = '123'
 server = 'localhost'
 port = 5432
-database = 'evaluacion-api'
+database = 'login_database'

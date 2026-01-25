@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import crud, models, schemas
 from database_connection import sessionLocal, engine
 from models import Base
+from pydantic import BaseModel
 
 #Base.metadata.create_all(bind=engine) # for local database
 
@@ -10,6 +11,11 @@ from models import Base
 # Create database and tables
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+# Token Structure
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
 # Dependence to get database Session
@@ -41,3 +47,13 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
     return db_user
+
+
+
+@app.post("/login/", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalidad user or password")
+    access_token = create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}

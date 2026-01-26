@@ -12,6 +12,7 @@ class UserCreate(UserBase):
 
 class User(UserBase): # This will be output mode user
     id: int
+    role: str
     is_active: bool
     created_at: datetime
     class Config:

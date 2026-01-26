@@ -24,8 +24,6 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.UserCreate):
     #fake_hashed_password = user.password + "notreallyhashed"
-    print(user.password)
-    print("LENGTH:", len(user.password.encode("utf-8")))
     real_hashed_password = hash_password(user.password)
 
     db_user = models.User(email=user.email, hashed_password=real_hashed_password)

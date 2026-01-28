@@ -10,7 +10,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-class User(UserBase): # This will be output mode user
+class UserOut(UserBase): # This will be output mode user
     id: int
     role: str
     is_active: bool

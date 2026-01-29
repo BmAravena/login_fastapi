@@ -10,6 +10,9 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserAdmin(UserCreate):
+    role: str
+
 class UserOut(UserBase): # This will be output mode user
     id: int
     role: str
@@ -17,3 +20,4 @@ class UserOut(UserBase): # This will be output mode user
     created_at: datetime
     class Config:
         orm_mode = True
+

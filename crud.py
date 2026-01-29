@@ -33,6 +33,17 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
+def create_admin(db: Session, user: schemas.UserAdmin):
+    #fake_hashed_password = user.password + "notreallyhashed"
+    real_hashed_password = hash_password(user.password)
+
+    db_user = models.User(email=user.email, hashed_password=real_hashed_password, role=user.role)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 def disable_user(db: Session, user_id: int):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
     if db_user is None:

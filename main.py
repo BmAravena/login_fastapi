@@ -23,7 +23,6 @@ class Token(BaseModel):
     token_type: str
 
 
-
 # Dependences
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserOut:
     payload = decode_token(token)
@@ -49,6 +48,15 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     return crud.create_user(db=db, user=user)
+
+
+# End points
+@app.post("/admin/", response_model=schemas.UserOut)
+def create_user(user: schemas.UserAdmin, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+    return crud.create_admin(db=db, user=user)
 
 
 @app.post("/token/", response_model=Token)
@@ -82,7 +90,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.get("/admin/")
 async def admin_route(current_user: UserOut = Depends(check_admin)):
-    return {"msg": f"Hello {current_user.full_name}, welcome to administrators panel"}
+    return {"msg": f"Hello {current_user.email}, welcome to administrators panel"}
 
 
 # @app.post("/login/", response_model=Token)

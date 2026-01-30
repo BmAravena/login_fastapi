@@ -74,8 +74,7 @@ def run_migrations_online() -> None:
     # )
     connectable = create_engine(
             database_url,
-            poolclass=pool.NullPool,
-            connect_args={"sslmode": "require"},
+            pool_pre_ping=True
         )
 
     with connectable.connect() as connection:

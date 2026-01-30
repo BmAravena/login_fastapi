@@ -7,5 +7,6 @@ pydantic
 pydantic[email]
 sqlalchemy
 alembic
-psycopg2
+psycopg2-binary
+
 

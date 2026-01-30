@@ -1,5 +1,5 @@
 from database_data_connection.data_connection import user, password, server, port, database
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, pool
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 
@@ -10,7 +10,7 @@ DATABASE_URL = "postgresql://myuser:superpass@dpg-abcd1234-a.oregon-postgres.ren
 
 
 engine = create_engine(DATABASE_URL,
-                       pool_pre_ping=True, 
+                       poolclass=True, 
                        connect_args={"sslmode": "require"})
 
 sessionLocal = sessionmaker(

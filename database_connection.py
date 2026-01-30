@@ -3,9 +3,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 
-DATABASE_URL = f"postgresql://{user}:{password}@{server}:{port}/{database}"
+#DATABASE_URL = f"postgresql://{user}:{password}@{server}:{port}/{database}"
+DATABASE_URL = "postgresql://myuser:superpass@dpg-abcd1234-a.oregon-postgres.render.com:5432/mydb"
 
-engine = create_engine(DATABASE_URL)
+
+engine = create_engine(DATABASE_URL,
+                       pool_pre_ping=True, 
+                       connect_args={"sslmode": "require"})
 
 sessionLocal = sessionmaker(
     autocommit=False,

@@ -10,7 +10,6 @@ DATABASE_URL = "postgresql://myuser:superpass@dpg-abcd1234-a.oregon-postgres.ren
 
 
 engine = create_engine(DATABASE_URL,
-                       poolclass=True, 
                        connect_args={"sslmode": "require"})
 
 sessionLocal = sessionmaker(

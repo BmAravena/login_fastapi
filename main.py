@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from security.auth_security import decode_token, get_user, authenticate_user, create_access_token, oauth2_scheme
 from security.auth_dependencies import get_db
-from schemas import UserOut
+from schemas import UserOut, UserPatch
 
 #Base.metadata.create_all(bind=engine) # for local database
 
@@ -70,7 +70,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 @app.get("/users/", response_model=list[schemas.UserOut])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+    users = crud.get_users_order(db, skip=skip, limit=limit)
     return users
 
 
@@ -93,10 +93,24 @@ async def admin_route(current_user: UserOut = Depends(check_admin)):
     return {"msg": f"Hello {current_user.email}, welcome to administrators panel"}
 
 
-# @app.post("/login/", response_model=Token)
-# async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-#     user = authenticate_user(form_data.username, form_data.password)
-#     if not user:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalidad user or password")
-#     access_token = create_access_token(data={"sub": user.username})
-#     return {"access_token": access_token, "token_type": "bearer"}
+@app.patch("/disable/{user_id}")
+def read_user(user_id: int, user_update: UserPatch, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+    
+    update_data = user_update.dict(exclude_unset=True)
+
+    if not update_data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No fields to update"
+        )
+
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
+    
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user

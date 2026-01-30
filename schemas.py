@@ -21,3 +21,10 @@ class UserOut(UserBase): # This will be output mode user
     class Config:
         orm_mode = True
 
+
+class UserPatch(BaseModel):
+    is_active: Optional[bool] = None
+    role: Optional[str] = None
+
+    class Config:
+        orm_mode = True

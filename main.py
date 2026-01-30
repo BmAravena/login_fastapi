@@ -14,7 +14,7 @@ from schemas import UserOut, UserPatch
 
 
 # Create database and tables
-models.Base.metadata.create_all(bind=engine)
+#models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Token Structure

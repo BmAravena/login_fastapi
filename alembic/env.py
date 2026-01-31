@@ -3,46 +3,37 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from models import Base
 import os
-from database_connection import engine
 
-
-
-
-# Alembic Config
 config = context.config
 
-# Cargar DATABASE_URL desde Render
 database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise RuntimeError("DATABASE_URL no está definida")
 
 config.set_main_option("sqlalchemy.url", database_url)
 
-# Logging
-if config.config_file_name is not None:
+if config.config_file_name:
     fileConfig(config.config_file_name)
 
-# Metadata
 target_metadata = Base.metadata
 
 
-def run_migrations_online():
-    with engine.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-        )
+def run_migrations_offline():
+    context.configure(
+        url=database_url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+    )
 
-        with context.begin_transaction():
-            context.run_migrations()
-
+    with context.begin_transaction():
+        context.run_migrations()
 
 
 def run_migrations_online():
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool,  # 👈 MUY IMPORTANTE en Render
+        poolclass=pool.NullPool,  # 🔥 clave para Render
     )
 
     with connectable.connect() as connection:
@@ -59,6 +50,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-
-
-

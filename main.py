@@ -34,6 +34,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not found user")
     return user
 
+
 # Role
 def check_admin(user: UserOut = Depends(get_current_user)):
     if user.role != "admin":

@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+from database_connection import engine
 
 from sqlalchemy import engine_from_config, create_engine
 from sqlalchemy import pool
@@ -72,10 +73,13 @@ def run_migrations_online() -> None:
     #     prefix="sqlalchemy.",
     #     poolclass=pool.NullPool,
     # )
-    connectable = create_engine(
-            database_url,
-            pool_pre_ping=True
-        )
+    # connectable = create_engine(
+    #         database_url,
+    #         pool_pre_ping=True
+    #     )
+    
+
+    connectable = engine
 
     with connectable.connect() as connection:
         context.configure(
